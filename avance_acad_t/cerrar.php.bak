@@ -1,0 +1,259 @@
+<?php
+#incluimoa el archivo config que contiene las variables globales.
+require('inc/config.php');
+require('inc/odbcss_c.php');
+$conex = new ODBC_Conn($basededatos,$usuariodb,$clavedb,TRUE,$laBitacora);
+
+$acta	=	$_POST['acta'];
+$lapso	=	$_POST['lapso'];
+$c_asigna	=	$_POST['c_asigna'];
+
+function Mes_Txt($Numero){
+	if ($Numero == 01){return "Enero";}
+	if ($Numero == 02){return "Febrero";}
+	if ($Numero == 03){return "Marzo";}
+	if ($Numero == 04){return "Abril";}
+	if ($Numero == 05){return "Mayo";}
+	if ($Numero == 06){return "Junio";}
+	if ($Numero == 07){return "Julio";}
+	if ($Numero == '08'){return "Agosto";}
+	if ($Numero == '09'){return "Septiembre";}
+	if ($Numero == 10){return "Octubre";}
+	if ($Numero == 11){return "Noviembre";}
+	if ($Numero == 12){return "Diciembre";}
+}
+	
+	$mSQL = "SELECT ci, seccion FROM tblaca004 WHERE c_asigna='".$c_asigna."'";
+	$mSQL.= "AND acta='".$acta."' AND lapso='".$lapso."'";
+	$conex->ExecSQL($mSQL,__LINE__,true);
+
+	$cedula = $conex->result[0][0];
+	$seccion = $conex->result[0][1];
+
+
+	$mSQL = "SELECT asignatura FROM tblaca008 WHERE c_asigna='".$c_asigna."'";
+//	$mSQL.= "AND acta='".$acta."' AND lapso='".$lapso."'";
+	$conex->ExecSQL($mSQL,__LINE__,true);
+
+	$asignatura = $conex->result[0][0];
+
+	//Lista de Estudiantes
+
+		$mSQL = "SELECT a.exp_e,a.apellidos,a.apellidos2,a.nombres,a.nombres2,b.status ";
+		$mSQL.= "FROM dace002 a,dace006 b,tblaca008 c,tblaca007 e,tblaca004 f ";
+		$mSQL.= "WHERE b.lapso='".$lapso."' AND a.exp_e=b.exp_e ";
+		$mSQL.= "AND  b.acta ='".$acta."' AND b.c_asigna=c.c_asigna AND f.ci='".$cedula."' ";
+		$mSQL.= "AND b.c_asigna=f.c_asigna AND b.lapso=f.lapso AND b.seccion=f.seccion ";
+		$mSQL.= "AND b.acta=f.acta AND f.ci=e.ci and b.status in (7,'A') ORDER BY 2,3,4,5";
+		$conex->ExecSQL($mSQL,__LINE__,true);
+		$lista_e=$conex->result;
+
+
+
+		$fecha = date('j')."-".substr(Mes_Txt(date('m')),0,3)."-".date('Y');
+print <<<ENC
+		<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+		<tr>
+			<td width="20%" style="text-align:center;"><img src="/img/logo_unexpo.png" width="90" height="68" border="0" alt="" title=""></td>
+			<td width="60%" style="text-align:center;font-family:arial;font-size:10pt;font-weight:bold;">
+					Universidad Nacional Experimental Polit&eacute;cnica<br>
+					"Antonio Jos&eacute; de Sucre"<br>
+					Vicerrectorado $vicerrectorado<br>
+					$nombreDependencia
+			</td>
+			<td width="20%" style="padding-left:20px;font-family:arial;font-size:10pt;">
+				Fecha: $fecha<br><br>
+				Lapso: $lapso
+			</td>
+		</tr>
+		</table>
+		<br>
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td width="60%" style="text-align:center;font-family:arial;font-size:12pt;font-weight:bold;" colspan="3">
+				ACTA DE EVALUACI&Oacute;N FINAL
+			</td>
+		</tr>
+		</table>
+		<br>
+		<table cellpadding="0" cellspacing="0" border="0" width="100%" align="center">
+		<tr>
+			<td width="20%" style="text-align:justify;font-family:arial;font-size:9pt;" colspan="3">
+				C&Oacute;DIGO: <span style="font-weight:bold;">$c_asigna</span>
+			</td>
+			<td width="60%" style="text-align:justify;font-family:arial;font-size:9pt;" colspan="3">
+				<span style="font-weight:bold;">$asignatura</span>
+			</td>
+			<td width="20%" style="text-align:center;font-family:arial;font-size:9pt;" colspan="3">
+				ACTA: <span style="font-weight:bold;">$acta</span>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align:justify;font-family:arial;font-size:9pt;" colspan="3">
+				SECCI&Oacute;N: <span style="font-weight:bold;">$seccion</span>
+			</td>
+		</tr>
+		</table>
+		<br>
+		<form name="notas" method="POST" action="acta.php">
+		<table cellpadding="0" cellspacing="0" border="1" width="100%" align="center" style="border-collapse:collapse;">
+		<tr>
+			<td width="48%" style="text-align:center;font-family:arial;font-size:8pt;" colspan="3">
+			</td>
+			<td width="32%" style="text-align:center;font-family:arial;font-size:8pt;" colspan="2">
+				NOTA DEFINITIVA
+			</td>
+			<td width="16%" style="text-align:center;font-family:arial;font-size:8pt;">
+			</td>
+		</tr>
+		<tr>
+			<td width="5%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+			</td>
+			<td width="10%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+				EXPEDIENTE
+			</td>
+			<td width="50%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+				APELLIDOS Y NOMBRES
+			</td>
+			<td width="10%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+				EN NUMERO
+			</td>
+			<td width="15%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+				EN LETRAS
+			</td>
+			<td width="10%" style="text-align:center;font-family:arial;font-size:6pt;font-weight:bold;">
+				OBSERVACION
+			</td>
+		</tr>
+		
+		
+ENC;
+
+
+/*print <<<CUERPO1
+		<table cellpadding="0" cellspacing="0" border="1" width="100%" align="center" style="border-collapse:collapse;">
+CUERPO1;*/
+		
+for($i=0;$i < count($lista_e);$i++){
+	echo "<tr>";
+	echo "<td width=\"5%\" style=\"text-align:center;font-family:arial;font-size:8pt;font-weight:bold;\">";
+		echo $i+1; // Numero
+	echo "</td>";
+
+	echo "<td width=\"10%\" style=\"text-align:center;font-family:arial;font-size:7pt;\">";
+		echo $lista_e[$i][0]; // Expediente
+	echo "<input type=\"hidden\" name=\"exp_".$i."\" value=\"".$lista_e[$i][0]."\"></td>";
+
+	echo "<td width=\"50%\" style=\"text-align:left;font-family:arial;font-size:7pt;padding-left:10px;padding-top:5px;padding-bottom:2px;\">";
+		echo $lista_e[$i][1]." ".$lista_e[$i][2]." ".$lista_e[$i][3]." ".$lista_e[$i][4]; // Apell y Nomb
+	echo "</td>";
+
+	// Buscar la nota segun el expediente
+	$mSQL = "SELECT total9 FROM n_estu WHERE exp_e='".$lista_e[$i][0]."' ";
+	$mSQL.= "AND acta='".$acta."' AND lapso='".$lapso."' AND c_asigna='".$c_asigna."' ";
+	$conex->ExecSQL($mSQL,__LINE__,true);
+	$nota = $conex->result[0][0];
+	
+	echo "<td width=\"10%\" style=\"text-align:center;font-family:arial;font-size:8pt;\">";
+		echo $nota; // Nota
+	echo "<input type=\"hidden\" name=\"nota_".$i."\" value=\"".$nota."\"></td>";
+
+	// Buscar el equivalente en letras segun la nota
+	$mSQL = "SELECT letras FROM letras WHERE nota='".$nota."' ";
+	$conex->ExecSQL($mSQL,__LINE__,true);
+	$enletras = $conex->result[0][0];
+
+	echo "<td width=\"15%\" style=\"text-align:left;font-family:arial;font-size:6pt;padding-left:10px;\">";
+		echo $enletras; // letras
+	echo "</td>";
+
+	echo "<td width=\"10%\" style=\"text-align:center;font-family:arial;font-size:8pt;\">&nbsp;</td>";
+	
+	echo "</tr>";
+}
+
+print <<<CUERPO2
+		
+		</table>
+		<input type="hidden" name="acta" value="$acta">
+		<input type="hidden" name="lapso" value="$lapso">
+		<input type="hidden" name="c_asigna" value="$c_asigna">
+		<input type="hidden" name="asignatura" value="$asignatura">
+		<input type="hidden" name="seccion" value="$seccion">
+		<input type="hidden" name="nro" value="$i">
+		</form>
+		<br><br>
+
+CUERPO2;
+
+	
+	// Buscar el equivalente en letras segun la nota
+	$mSQL = "SELECT apellido,nombre FROM tblaca007 WHERE ci='".$cedula."' ";
+	$conex->ExecSQL($mSQL,__LINE__,true);
+	$apeynom = $conex->result[0][0]." ".$conex->result[0][1];
+
+
+
+print <<<PIE
+		<table cellpadding="0" cellspacing="0" border="1" width="100%" align="center" style="border-collapse:collapse;">
+		<tr>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:7pt;font-weight:bold;">
+				PROFESOR:
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:7pt;font-weight:bold;">
+				Nro. CEDULA
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:7pt;font-weight:bold;">
+				FIRMA
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:7pt;font-weight:bold;">
+				FECHA:
+			</td>
+		</tr>
+		<tr>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:8pt;">
+				$apeynom
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:8pt;padding-top:10px;padding-bottom:5px;">
+				$cedula
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:8pt;">
+				
+			</td>
+			<td width="25%" style="text-align:center;font-family:arial;font-size:8pt;">
+				
+			</td>
+		</tr>
+		</table>
+		<div align="center" style="text-align:center;font-family:arial;font-size:4pt;">VA SIN ENMIENDAS</div>
+		<br><br>
+		<div align="center" style="text-align:center;font-family:arial;font-size:4pt;">
+			<form name="volver" method="post" action="cante.php">
+				<input type="hidden" name="acta" value="$acta">
+				<input type="hidden" name="lapso" value="$lapso">
+				<input type="hidden" name="c_asigna" value="$c_asigna">
+				<input type="submit" value="Regresar">
+			</form>
+			<input type="button" value="Confirmar Cierre de Acta" onclick="confirmar();">
+		</div>
+
+PIE;
+
+?>
+
+<script languaje="javascript"> 
+	function confirmar() {
+		acta = document.notas.acta.value;
+		lapso = document.notas.lapso.value;
+		c_asigna = document.notas.c_asigna.value;
+		asignatura = document.notas.asignatura.value;
+		seccion = document.notas.seccion.value;
+
+		envia = confirm('Está intentado cerrar el acta número '+acta+' correspondiente a:\n\n - Asignatura: '+asignatura+'\n - Código: '+c_asigna+'\n - Seccion: '+seccion+'\n - Lapso: '+lapso+'\n\nUna vez cerrada no podrá realizar modificación alguna.\n\n____________________________________________________________\n\n				¿Confirma el cierre de esta acta?\nPor favor presione ACEPTAR para confirmar. CANCELAR para declinar.');
+
+		if (envia){
+			document.notas.submit();
+		}
+	}
+	
+</script>

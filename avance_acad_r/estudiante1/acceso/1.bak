@@ -1,0 +1,12 @@
+ {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+*:[29/10/2009 09:50:22.50][172.16.12.250][26] SELECT ci_e, exp_e, nombres, apellidos, lapso_in FROM DACE002 WHERE ci_e='17591394' [0][0]  {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+ {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+*:[29/10/2009 09:55:25.20][172.16.12.250][26] SELECT ci_e, exp_e, nombres, apellidos, lapso_in FROM DACE002 WHERE ci_e='17591394' [0][0]  {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+ {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+*:[29/10/2009 09:57:05.34][172.16.12.250][26] SELECT ci_e, exp_e, nombres, apellidos, lapso_in FROM DACE002 WHERE ci_e='17591394' [0][0]  {[Microsoft][Administrador de controladores ODBC] No se encuentra el nombre del origen de datos y no se especificó ningún controlador predeterminado}
+C:[29/10/2009 09:58:18.94][172.16.12.250][26] SELECT ci_e, exp_e, nombres, apellidos, lapso_in FROM DACE002 WHERE ci_e='17591394' [1][0] OK
+C:[29/10/2009 09:58:18.28][172.16.12.250][34] SELECT password, tipo_usuario FROM usuarios WHERE userid='06-17591394' [1][0] OK
+C:[29/10/2009 09:58:18.28][172.16.12.250][43] SELECT tipo_usuario FROM usuarios WHERE password='e9d8fd1a46b1cb02f90e7eb7e1c07377'  [1][0] OK
+C:[29/10/2009 09:58:41.79][172.16.12.250][26] SELECT ci_e, exp_e, nombres, apellidos, lapso_in FROM DACE002 WHERE ci_e='17591394' [1][0] OK
+C:[29/10/2009 09:58:41.12][172.16.12.250][34] SELECT password, tipo_usuario FROM usuarios WHERE userid='06-17591394' [1][0] OK
+C:[29/10/2009 09:58:41.12][172.16.12.250][43] SELECT tipo_usuario FROM usuarios WHERE password='e9d8fd1a46b1cb02f90e7eb7e1c07377'  [1][0] OK
